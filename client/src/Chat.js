@@ -13,13 +13,11 @@ class Chat extends React.Component{
 		};
 
 
-		this.socket = socketIOClient('localhost:8080', {
-          transports: ['websocket'],
-          upgrade: false,
-        });
+        // this has to be something other than localhost.
 
+		this.socket = socketIOClient.connect('https://gentle-crag-23071.herokuapp.com', {secure: true});
 
-
+       
 
         this.socket.on('RECEIVE_MESSAGE', function(data){
             addMessage(data);
