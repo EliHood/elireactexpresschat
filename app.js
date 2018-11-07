@@ -1,12 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const  app = express();
-const  server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var PORT = process.env.PORT || 8080;
 
-server.listen(process.env.PORT || 3000, ()=>{
-  console.log('port is listening');
-});
+
 
 
 // Server static assets if in production
@@ -30,5 +29,9 @@ io.on('connection', (socket)=>{
 	})
 
 
+});
+
+http.listen(PORT,function(){
+  console.log('listening on port %s',PORT);
 });
 
