@@ -13,7 +13,13 @@ class Chat extends React.Component{
 		};
 
 
-		this.socket = socketIOClient('localhost:8080');
+		this.socket = socketIOClient('localhost:8080', {
+          transports: ['websocket'],
+          upgrade: false,
+        });
+
+
+
 
         this.socket.on('RECEIVE_MESSAGE', function(data){
             addMessage(data);
