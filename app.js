@@ -1,16 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const socketIo = require("socket.io");
-const http = require("http");
+const  app = express();
+const  server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
 
-
-
-let app = express();
-
-
-const server = app.listen(8080, ()=> {
-    console.log('server is running on port 8080')
+server.listen(process.env.PORT || 3000, ()=>{
+  console.log('port is listening');
 });
+
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
@@ -22,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-const io = socketIo(server);
+
 
 io.on('connection', (socket)=>{
 	console.log(socket.id);
