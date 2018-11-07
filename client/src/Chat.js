@@ -17,7 +17,9 @@ class Chat extends React.Component{
 
 		this.socket = socketIOClient.connect('https://gentle-crag-23071.herokuapp.com', {secure: true});
 
-       
+       if(!this.socket){
+            this.socket = socketIOClient('localhost:5000');
+       }
 
         this.socket.on('RECEIVE_MESSAGE', function(data){
             addMessage(data);
