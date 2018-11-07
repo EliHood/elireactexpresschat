@@ -1,0 +1,22 @@
+{
+  "name": "eliappchat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.0.1",
+    "express": "^4.16.4",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "client": "cd client && npm start",
+    "server": "node app.js",
+    "client": "npm start --prefix client",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "cd client && npm run build"
+  },
+  "author": "",
+  "license": "ISC"
+}
