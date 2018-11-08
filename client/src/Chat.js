@@ -11,6 +11,7 @@ class Chat extends React.Component{
 		this.state = {
 			username: '', 
 			message: '',
+            disabled: false,
             intervalIsSet: false,
 			messages: [],
             chatHistory: []
@@ -40,7 +41,7 @@ class Chat extends React.Component{
 
             const mymessage = this.state.message
 
-            if(mymessage != 0){
+            if(mymessage.length !== 0){
 
                 this.socket.emit('SEND_MESSAGE', {
                     author: this.state.username,
@@ -53,7 +54,19 @@ class Chat extends React.Component{
     
         }
 
-        
+
+
+        this.setUsername = ev => {
+
+            const username = this.state.username
+
+            this.setState( {
+                username: username,
+                disabled: !this.state.disabled
+            } );
+
+
+        }
 
 
         const addMessage = data => {
@@ -133,7 +146,10 @@ class Chat extends React.Component{
 
 
 	render(){
+
 		return(
+
+
 
 			 <div className="chat">
              <h3 className="chat_head">Chat Demo Still Unsure</h3>
@@ -147,7 +163,7 @@ class Chat extends React.Component{
 
                                 {this.state.messages.map((message, key) => {
                                 	return(
-                                		<div key={key}> {message.author}: {message.message}</div>
+                                		<div className="chat_text" key={key}> {message.author}: {message.message}</div>
 
                                 	);
                                 })}
@@ -156,12 +172,29 @@ class Chat extends React.Component{
                                 
                             </div>
                             <div className="card-footer">
-                                    <input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} className="form-control"/>
-                                    <br/>
+
+                                <h6> Set Username</h6>
+
+                                <input type="text" 
+                                placeholder="Username" 
+                                value={this.state.username} 
+                                onChange={ev => this.setState({username: ev.target.value})} 
+                                disabled = {(this.state.disabled)? "disabled" : ""}
+                                className="form-control"/>
+                                <button onClick={this.setUsername} className="btn btn-primary btn-sm mt-3">Set</button>
+                                <br/>
+
+                            </div>
+
+                            <div className="card-footer">
+                            
+
                                     <input type="text" placeholder="Message" required value={this.state.message} onChange={ev => this.setState({message: ev.target.value})} className="form-control"/>
                                     <br/>
                                     <button  onClick={this.sendMessage} className="btn btn-primary form-control">Send</button>
                             </div>
+
+                            
                         </div>
                     </div>
                 </div>
