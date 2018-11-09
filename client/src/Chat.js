@@ -11,8 +11,10 @@ class Chat extends React.Component{
 		super(props);
 
 		this.state = {
-			username: '', 
+			username: '',
 			message: '',
+			usernameError: "",
+			set: 'Set',
 			disable: 'show',
 			disable2: false,
             intervalIsSet: false,
@@ -35,7 +37,7 @@ class Chat extends React.Component{
 
         this.socket.on('RECEIVE_MESSAGE', function(data){
             addMessage(data);
-            
+
         });
 
 
@@ -54,21 +56,29 @@ class Chat extends React.Component{
                 this.setState({message: ''});
 
             }
-    
+
         }
         this.setUsername = ev => {
+
     	    if (!this.isEnabled()) {
 		      ev.preventDefault();
 		      return;
 		    }
-			        
+
             const username = this.state.username
 
-            this.setState( {
-                username: username,
-                disable: 'hide',
-                disable2: true
-            } );
+            const err = this.validate();
+
+            if(!err){
+	            this.setState( {
+	                username: username,
+	                disable: 'hide',
+	                disable2: true,
+	                set: ''
+	            } );
+
+            }
+      
 
 
         }
@@ -90,18 +100,45 @@ class Chat extends React.Component{
       this.isEnabled = () =>{
 	     const { username} = this.state
 		    return (
-		      username.length > 0 
+		      username.length > 0
 		    );
-	    	
+
 	    }
- 
+
+
+	    this.validate = () =>{
+
+	    	const errors = {
+	    		usernameError: ""
+	    	};
+
+	    	let isError = false;
+
+	    	if(this.state.username.length < 5){
+	    		isError = true;
+	    		errors.usernameError = "Username must be at least 5 characters long";
+	    	}
+
+    	    this.setState({
+			      ...this.state,
+			      ...errors
+			    });
+
+    	    return isError;
+
+
+
+	    }
+
+
+
 
      // end of constructor
     }
 
 
- 
- 
+
+
 
 	    hydrateStateWithLocalStorage() {
 	        // for all items in state
@@ -154,8 +191,6 @@ class Chat extends React.Component{
 
 
 
-		
-
 
 
 
@@ -176,7 +211,7 @@ class Chat extends React.Component{
                     <div className="row">
                         <div className="card">
                             <div className="card-body">
-                                
+
                                 <hr/>
                                 <div className="messages">
 
@@ -188,13 +223,14 @@ class Chat extends React.Component{
                                 })}
                                      <SimpleStorage parent={this} />
                                 </div>
-                                
+
                             </div>
                             <div className="card-footer">
 
-                                <h6> Set Username</h6>
+                                <h6> {this.state.set} Username</h6>
 
 								<form onSubmit={this.setUsername}>
+									<small className="error">{this.state.usernameError} </small>
 									<input type="text"
 									placeholder="Username"
 									value={this.state.username}
@@ -203,22 +239,22 @@ class Chat extends React.Component{
 									className="form-control"/>
 									<button id={this.state.disable} disabled={!isEnab} className="btn btn-primary btn-sm mt-3">Set</button>
 								</form>
-                           
-                      
 
-                             
+
+
+
 
                             </div>
 
                             <div className="card-footer">
-                            
+
 
                                     <input type="text" placeholder="Message" required value={this.state.message} onChange={ev => this.setState({message: ev.target.value})} className="form-control"/>
                                     <br/>
                                     <button  onClick={this.sendMessage} className="btn btn-primary form-control">Send</button>
                             </div>
 
-                            
+
                         </div>
                     </div>
                 </div>
@@ -226,7 +262,7 @@ class Chat extends React.Component{
 
 
 
-		
+
 
 		);
 	}
