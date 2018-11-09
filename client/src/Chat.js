@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import socketIOClient from "socket.io-client";
 import axios from 'axios';
+import Username from './components/Username';
 import SimpleStorage from "react-simple-storage";
+
 
 class Chat extends React.Component{
 
@@ -11,7 +13,8 @@ class Chat extends React.Component{
 		this.state = {
 			username: '', 
 			message: '',
-            disabled: false,
+			disable: 'show',
+			disable2: false,
             intervalIsSet: false,
 			messages: [],
             chatHistory: []
@@ -53,16 +56,18 @@ class Chat extends React.Component{
             }
     
         }
-
-
-
         this.setUsername = ev => {
-
+    	    if (!this.isEnabled()) {
+		      ev.preventDefault();
+		      return;
+		    }
+			        
             const username = this.state.username
 
             this.setState( {
                 username: username,
-                disabled: !this.state.disabled
+                disable: 'hide',
+                disable2: true
             } );
 
 
@@ -81,63 +86,75 @@ class Chat extends React.Component{
 
         };
 
+
+      this.isEnabled = () =>{
+	     const { username} = this.state
+		    return (
+		      username.length > 0 
+		    );
+	    	
+	    }
+ 
+
      // end of constructor
     }
 
 
+ 
+ 
 
-    hydrateStateWithLocalStorage() {
-        // for all items in state
-        for (let key in this.state) {
-          // if the key exists in localStorage
-          if (localStorage.hasOwnProperty(key)) {
-            // get the key's value from localStorage
-            let value = localStorage.getItem(key);
+	    hydrateStateWithLocalStorage() {
+	        // for all items in state
+	        for (let key in this.state) {
+	          // if the key exists in localStorage
+	          if (localStorage.hasOwnProperty(key)) {
+	            // get the key's value from localStorage
+	            let value = localStorage.getItem(key);
 
-            // parse the localStorage string and setState
-            try {
-              value = JSON.parse(value);
-              this.setState({ [key]: value });
-            } catch (e) {
-              // handle empty string
-              this.setState({ [key]: value });
-            }
-          }
-        }
-    }
+	            // parse the localStorage string and setState
+	            try {
+	              value = JSON.parse(value);
+	              this.setState({ [key]: value });
+	            } catch (e) {
+	              // handle empty string
+	              this.setState({ [key]: value });
+	            }
+	          }
+	        }
+	    }
 
-    saveStateToLocalStorage() {
-    // for every item in React state
-        for (let key in this.state) {
-          // save to localStorage
-          localStorage.setItem(key, JSON.stringify(this.state[key]));
-        }
-    }
+	    saveStateToLocalStorage() {
+	    // for every item in React state
+	        for (let key in this.state) {
+	          // save to localStorage
+	          localStorage.setItem(key, JSON.stringify(this.state[key]));
+	        }
+	    }
 
-    componentDidMount() {
-        this.hydrateStateWithLocalStorage();
+	    componentDidMount() {
+	        this.hydrateStateWithLocalStorage();
 
-        // add event listener to save state to localStorage
-        // when user leaves/refreshes the page
-        window.addEventListener(
-          "beforeunload",
-          this.saveStateToLocalStorage.bind(this)
-        );
-    }
+	        // add event listener to save state to localStorage
+	        // when user leaves/refreshes the page
+	        window.addEventListener(
+	          "beforeunload",
+	          this.saveStateToLocalStorage.bind(this)
+	        );
+	    }
 
-    componentWillUnmount() {
-        window.removeEventListener(
-          "beforeunload",
-          this.saveStateToLocalStorage.bind(this)
-        );
+	    componentWillUnmount() {
+	        window.removeEventListener(
+	          "beforeunload",
+	          this.saveStateToLocalStorage.bind(this)
+	        );
 
-        // saves if component has a chance to unmount
-        this.saveStateToLocalStorage();
-    }
+	        // saves if component has a chance to unmount
+	        this.saveStateToLocalStorage();
+	    }
 
 
 
-	
+		
 
 
 
@@ -146,6 +163,8 @@ class Chat extends React.Component{
 
 
 	render(){
+
+		const isEnab = this.isEnabled();
 
 		return(
 
@@ -175,14 +194,19 @@ class Chat extends React.Component{
 
                                 <h6> Set Username</h6>
 
-                                <input type="text" 
-                                placeholder="Username" 
-                                value={this.state.username} 
-                                onChange={ev => this.setState({username: ev.target.value})} 
-                                disabled = {(this.state.disabled)? "disabled" : ""}
-                                className="form-control"/>
-                                <button onClick={this.setUsername} className="btn btn-primary btn-sm mt-3">Set</button>
-                                <br/>
+								<form onSubmit={this.setUsername}>
+									<input type="text"
+									placeholder="Username"
+									value={this.state.username}
+									disabled = {this.state.disable2}
+									onChange={ev => this.setState({username: ev.target.value})}
+									className="form-control"/>
+									<button id={this.state.disable} disabled={!isEnab} className="btn btn-primary btn-sm mt-3">Set</button>
+								</form>
+                           
+                      
+
+                             
 
                             </div>
 
