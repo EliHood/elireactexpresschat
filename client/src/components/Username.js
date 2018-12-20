@@ -1,23 +1,23 @@
 import React from 'react';
 
-const Username = (props)=>{
+const Username = (props) => {
 
-	return(
-		<div>
+    return (
+        <div>
 
-		<form onClick={props.onClick}>
-            <input type="text" 
-         	placeholder="Username" 
-            value={props.value} 
-            onChange={props.onChange} 
-            className="form-control"/>
-        </form>
+            <form onClick={props.onClick}>
+                <input
+                    type="text"
+                    placeholder="Username"
+                    value={props.value}
+                    onChange={props.onChange}
+                    className="form-control"/>
+            </form>
 
         </div>
-	
-	);
+
+    );
 
 }
-
 
 export default Username;
